@@ -13,7 +13,7 @@ openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)  # Use new client format
 # Function to interact with Vakil GPT
 def chat_with_vakil_gpt(message):
     response = openai_client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are Vakil GPT, an AI specializing in Indian legal guidance."},
             {"role": "user", "content": message}
