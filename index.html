@@ -6,11 +6,12 @@
         chatbox.innerHTML += `<p><b>You:</b> ${userInput}</p>`;
         document.getElementById("user-input").value = "";
 
-        let response = await fetch("https://vakil-gpt.onrender.com/chat", {  // Use Render URL
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userInput })
-        });
+    let response = await fetch("https://vakil-gpt.onrender.com/chat", { 
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: userInput })
+    });
+
 
         let data = await response.json();
         chatbox.innerHTML += `<p><b>Vakil GPT:</b> ${data.reply}</p>`;
