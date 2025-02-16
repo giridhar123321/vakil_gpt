@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vakil GPT Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f5f5f5; }
+        #chatbox { width: 400px; height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin: auto; background: white; }
+        #user-input { width: 300px; padding: 10px; border: 1px solid #ccc; }
+        #send-button { padding: 10px; background: blue; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Chat with Vakil GPT</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="user-input" placeholder="Ask your legal question...">
+    <button id="send-button" onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            let userInput = document.getElementById("user-input").value;
+            let chatbox = document.getElementById("chatbox");
+
+            chatbox.innerHTML += `<p><b>You:</b> ${userInput}</p>`;
+            document.getElementById("user-input").value = "";
+
+            let response = await fetch("http://127.0.0.1:5000/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userInput })
+            });
+
+            let data = await response.json();
+            chatbox.innerHTML += `<p><b>Vakil GPT:</b> ${data.reply}</p>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
