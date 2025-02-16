@@ -1,5 +1,4 @@
 flask
-openai>=1.0.0
-deepseek
+google-generativeai
 flask-cors
 gunicorn
