@@ -12,7 +12,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Configure Gemini API
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Function to interact with Gemini AI with Indian legal specialization
+# Function to interact with Gemini AI for Indian legal assistance
 def chat_with_vakil_gpt(message):
     try:
         model = genai.GenerativeModel("gemini-pro")  # Free Gemini model
@@ -35,8 +35,8 @@ def chat_with_vakil_gpt(message):
 
         response = model.generate_content(
             [
-                {"parts": [{"text": system_prompt}]}, 
-                {"parts": [{"text": message}]}
+                {"role": "user", "parts": [{"text": system_prompt}]},  # Use "user" role for instructions
+                {"role": "user", "parts": [{"text": message}]}  # User's legal question
             ]
         )
 
