@@ -12,11 +12,27 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Configure Gemini API
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Function to interact with Gemini AI
+# Function to interact with Gemini AI with Indian legal specialization
 def chat_with_vakil_gpt(message):
     try:
         model = genai.GenerativeModel("gemini-pro")  # Free Gemini model
-        response = model.generate_content(message)
+        system_prompt = """
+        You are Vakil GPT, an AI legal assistant specializing in Indian law. 
+        Your job is to provide **general legal information** on:
+        - Indian **criminal law** (IPC, CrPC)
+        - **Property law** (transfer of property, RERA)
+        - **Contract law** (Indian Contract Act, agreements)
+        - **Family law** (marriage, divorce, inheritance)
+        - **Consumer rights** (Consumer Protection Act)
+        - **Cyber law** (IT Act)
+        
+        **Rules for response:**
+        1️⃣ **DO NOT give personal legal advice.** Instead, suggest consulting a lawyer.
+        2️⃣ Use **simple, understandable language** for non-lawyers.
+        3️⃣ If you don't know the answer, say **"I recommend consulting a legal expert."**
+        """
+
+        response = model.generate_content([{"role": "system", "content": system_prompt}, {"role": "user", "content": message}])
         return response.text
     except Exception as e:
         return f"⚠️ Error: {str(e)}"
