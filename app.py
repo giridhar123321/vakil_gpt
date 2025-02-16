@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
 
 # Set OpenAI API Key (from Render Environment Variables)
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)  # Use new client format
 
 # Function to interact with Vakil GPT
