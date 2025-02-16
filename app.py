@@ -5,14 +5,15 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
 
-# Set your OpenAI API Key
-OPENAI_API_KEY = "your_openai_api_key_here"
+# Set OpenAI API Key (Store in Render ENV Variables)
+import os
+OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
-# Function to communicate with Vakil GPT
+# Function to interact with Vakil GPT
 def chat_with_vakil_gpt(message):
     response = openai.ChatCompletion.create(
-        model="gpt-4",  # GPT-4 (Vakil GPT is a custom instruction-based model)
+        model="gpt-4",
         messages=[
             {"role": "system", "content": "You are Vakil GPT, an AI specializing in Indian legal guidance."},
             {"role": "user", "content": message}
@@ -33,4 +34,4 @@ def chat():
     return jsonify({"reply": reply})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000)  # Change port for Render
