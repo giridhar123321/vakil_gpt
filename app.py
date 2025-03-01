@@ -16,7 +16,7 @@ genai.configure(api_key=GEMINI_API_KEY)
 # Function to interact with Gemini AI for Indian legal assistance
 def chat_with_vakil_gpt(user_message):
     try:
-        model = genai.GenerativeModel("gemini-pro")  # Free Gemini model
+        model = genai.GenerativeModel("gemini-2.0-flash")  # Updated to Gemini 2.0 Flash
 
         # Retrieve session history or initialize it
         if "chat_history" not in session:
