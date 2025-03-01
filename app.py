@@ -2,17 +2,10 @@ import os
 import google.generativeai as genai
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-from flask_session import Session
 
 app = Flask(__name__)
 CORS(app)  # Enable cross-origin requests
 app.secret_key = "supersecretkey"  # Required for session storage
-
-# Configure Flask Session (without Redis)
-app.config["SESSION_TYPE"] = "filesystem"  # Stores session data in temporary files
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_USE_SIGNER"] = True
-Session(app)
 
 # Load Gemini API key from environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
