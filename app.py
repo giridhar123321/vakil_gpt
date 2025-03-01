@@ -2,19 +2,24 @@ import os
 import google.generativeai as genai
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
+from flask_session import Session
 
 app = Flask(__name__)
 CORS(app)  # Enable cross-origin requests
-app.secret_key = "supersecretkey"  # Required for session management
+app.secret_key = "supersecretkey"  # Required for session storage
+
+# Configure Flask Session (without Redis)
+app.config["SESSION_TYPE"] = "filesystem"  # Stores session data in temporary files
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_USE_SIGNER"] = True
+Session(app)
 
 # Load Gemini API key from environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-# Configure Gemini API
 genai.configure(api_key=GEMINI_API_KEY)
 
-# System instructions for VakilMate legal assistant
-LEGAL_ASSISTANT_INSTRUCTIONS = """
+# System prompt for Vakil GPT (Legal Assistant for Indian Law)
+SYSTEM_PROMPT = """
 VakilMate – Your AI Legal Research Assistant for Indian Law
 VakilMate is an AI-powered legal assistant specializing in Indian law, designed to provide general legal information and assist in legal research for both lawyers and non-lawyers.
 
@@ -34,27 +39,30 @@ Rules for Responses:
 🔹 Jurisdiction-Specific - Focused on Indian law with state variations where applicable.
 """
 
-# Function to interact with Gemini AI for Indian legal assistance
+# Function to interact with Gemini AI for legal assistance
 def chat_with_vakil_gpt(user_message):
     try:
-        model = genai.GenerativeModel("gemini-2.0-flash")  # Using Gemini 2.0 Flash
+        model = genai.GenerativeModel("gemini-2.0-flash")  # Ensure correct model is used
 
-        # Retrieve session history or initialize it
-        if "chat_history" not in session:
-            session["chat_history"] = []
+        # Retrieve chat history from session
+        chat_history = session.get("chat_history", [])
 
-        # If chat history is empty, start with assistant instructions
-        if not session["chat_history"]:
-            session["chat_history"].append({"role": "user", "parts": [{"text": LEGAL_ASSISTANT_INSTRUCTIONS}]})
+        # Add system prompt if it's a new session
+        if not chat_history:
+            chat_history.append({"role": "system", "parts": [{"text": SYSTEM_PROMPT}]})
 
-        # Append new user message to chat history
-        session["chat_history"].append({"role": "user", "parts": [{"text": user_message}]})
+        # Append new user message
+        chat_history.append({"role": "user", "parts": [{"text": user_message}]})
 
-        # Generate response from Gemini
-        response = model.generate_content(session["chat_history"])
+        # Ensure full chat history is passed
+        response = model.generate_content(chat_history)
 
-        # Store the assistant's response in session history
-        session["chat_history"].append({"role": "assistant", "parts": [{"text": response.text}]})
+        # Store assistant's response in chat history
+        chat_history.append({"role": "assistant", "parts": [{"text": response.text}]})
+
+        # Save updated session history
+        session["chat_history"] = chat_history
+        session.modified = True  # Ensure session changes are saved
 
         return response.text
     except Exception as e:
